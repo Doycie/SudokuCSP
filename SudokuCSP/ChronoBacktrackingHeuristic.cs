@@ -1,13 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SudokuCSP
 {
-    internal class ChronoBacktracking : SudokuSolver
+    class ChronoBacktrackingHeuristic : SudokuSolver
     {
+        int[] CSPOrderList;
         public override void solve()
         {
+            Dictionary<int, int> occurrences = new Dictionary<int, int>();
+            for(int i = 1; i < N + 1; i++)
+            {
+                occurrences.Add(i, 0);
+            }
+
+            for(int i = 0; i < N * N; i++)
+            {
+                if (board[i] != 0)
+                    occurrences[board[i]] = occurrences[board[i]] + 1;
+            }
+           
+            var CSPOrderListT = occurrences.ToList();
+            CSPOrderListT.Sort((x, y) => x.Value.CompareTo(y.Value));
+            CSPOrderList = CSPOrderListT.Select(kvp => kvp.Key).ToArray();
+
             solveRec(0);
-            Console.WriteLine("Score: " + Evaluation()+  " in " + it + " iterations");
+            Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
             print();
         }
 
@@ -16,14 +37,19 @@ namespace SudokuCSP
         public bool solveRec(int start)
         {
             it++;
-            if (start == N * N )
+            Console.ReadLine();
+            Console.Clear();
+            print(start/N,start%N);
+            
+
+            if (start == N * N)
             {
                 return true;
             }
 
             if (board[start] == 0)
             {
-                for (int i = 1; i < N + 1; i++)
+                foreach (int i in CSPOrderList)
                 {
                     if (check(start, i))
                     {
@@ -43,7 +69,7 @@ namespace SudokuCSP
                         board[start] = 0;
                     }
                 }
-                if (board[start] == 0 )
+                if (board[start] == 0)
                 {
                     return false;
                 }
