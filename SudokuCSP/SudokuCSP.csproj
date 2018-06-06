@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChornoBacktrackingHeuristic2.cs" />
     <Compile Include="ChronoBacktracking.cs" />
     <Compile Include="ChronoBacktrackingHeuristic.cs" />
     <Compile Include="Program.cs" />

@@ -91,6 +91,42 @@ namespace SudokuCSP
             return true;
         }
 
+        protected int checkCount(int place)
+        {
+            int restrictions = 0;
+            int y = place / N;
+            int x = place % N;
+
+            for (int i = 0; i < N; i++)
+            {
+                if (board[N * y + i] != 0)
+                    restrictions++;
+            }
+            for (int i = 0; i < N; i++)
+            {
+                if (board[N * i + x] != 0)
+                     restrictions++;
+            }
+
+            return restrictions + NumberInBlockCount( x / B, y / B);
+        }
+
+        protected int NumberInBlockCount( int xb, int yb)
+        {
+            int restrictions = 0;
+            for (int i = xb * B; i < xb * B + B; i++)
+            {
+                for (int j = yb * B; j < yb * B + B; j++)
+                {
+                    if ( board[j * N + i] != 0)
+                    {
+                        restrictions++;
+                    }
+                }
+            }
+            return restrictions;
+        }
+
 
         //Method to count the amount of missing numbers in a row, only used in the evaluation function
         private int CountMissingNumbersC(int i, ref int[] board)

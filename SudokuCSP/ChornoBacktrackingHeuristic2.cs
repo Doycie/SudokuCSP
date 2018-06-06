@@ -6,26 +6,24 @@ using System.Threading.Tasks;
 
 namespace SudokuCSP
 {
-    class ChronoBacktrackingHeuristic : SudokuSolver
+    class ChornoBacktrackingHeuristic2 : SudokuSolver
     {
-        int[] CSPOrderList;
+
+
+        List<Tuple<int,int>> CSPOrderList;
         public override void solve()
         {
-            Dictionary<int, int> occurrences = new Dictionary<int, int>();
-            for(int i = 1; i < N + 1; i++)
+            CSPOrderList = new List<Tuple<int, int>>(N*N+1);
+            for (int i = 0; i < N *N; i++)
             {
-                occurrences.Add(i, 0);
+                
+               // print(i / N, i % N);
+               // Console.WriteLine(checkCount(i));
+              //  Console.ReadLine();
+                CSPOrderList.Add( Tuple.Create(i,checkCount(i)));
             }
 
-            for(int i = 0; i < N * N; i++)
-            {
-                if (board[i] != 0)
-                    occurrences[board[i]] = occurrences[board[i]] + 1;
-            }
-           
-            var CSPOrderListT = occurrences.ToList();
-            CSPOrderListT.Sort((x, y) => x.Value.CompareTo(y.Value));
-            CSPOrderList = CSPOrderListT.Select(kvp => kvp.Key).ToArray();
+            CSPOrderList.Sort((x, y) =>y.Item2.CompareTo(x.Item2));
 
             solveRec(0);
             Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
@@ -34,22 +32,24 @@ namespace SudokuCSP
 
         int it = 0;
 
-        public bool solveRec(int start)
+        public bool solveRec(int startN)
         {
-            it++;
-           // Console.ReadLine();
-           // Console.Clear();
-            print(start/N,start%N);
-            
 
-            if (start == N * N)
+
+            if (startN == N * N)
             {
                 return true;
             }
+            //Console.ReadLine();
+           // Console.Clear();
+            it++;
+            int start = CSPOrderList[startN].Item1;
+            //Console.WriteLine(startN + " " + start + " " + CSPOrderList[startN].Item2);
+            //print(start / N, start % N);
 
             if (board[start] == 0)
             {
-                foreach (int i in CSPOrderList)
+                for (int i = 0; i < N+1;i++)
                 {
                     if (check(start, i))
                     {
@@ -59,7 +59,7 @@ namespace SudokuCSP
                     {
                         continue;
                     }
-                    bool result = solveRec(start + 1);
+                    bool result = solveRec(startN + 1);
                     if (result == true)
                     {
                         return true;
@@ -76,7 +76,7 @@ namespace SudokuCSP
             }
             else
             {
-                bool result = solveRec(start + 1);
+                bool result = solveRec(startN + 1);
                 return result;
             }
 

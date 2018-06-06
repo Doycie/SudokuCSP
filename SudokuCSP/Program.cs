@@ -20,11 +20,12 @@ namespace SudokuCSP
         {
 
 
-            readBoardFromFile(4);
-            SudokuSolver cb = new ChronoBacktracking();
-            cb.init(OriginalSudoku);
-            cb.solve();
-            SudokuSolver cbh = new ChronoBacktrackingHeuristic();
+            readBoardFromFile(9);
+            //readBoard();
+            //SudokuSolver cb = new ChronoBacktracking();
+            //cb.init(OriginalSudoku);
+            //cb.solve();
+            SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
             cbh.init(OriginalSudoku);
             cbh.solve();
 
