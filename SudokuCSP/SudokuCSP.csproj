@@ -45,6 +45,7 @@
     <Compile Include="ChornoBacktrackingHeuristic2.cs" />
     <Compile Include="ChronoBacktracking.cs" />
     <Compile Include="ChronoBacktrackingHeuristic.cs" />
+    <Compile Include="ForwardChecking.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SudokuSolver.cs" />

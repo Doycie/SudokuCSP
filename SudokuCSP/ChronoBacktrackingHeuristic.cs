@@ -32,7 +32,7 @@ namespace SudokuCSP
             print();
         }
 
-        int it = 0;
+  
 
         public bool solveRec(int start)
         {

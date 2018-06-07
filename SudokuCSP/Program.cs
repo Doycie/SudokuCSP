@@ -19,16 +19,19 @@ namespace SudokuCSP
         static void Main(string[] args)
         {
 
-
-            readBoardFromFile(9);
-            //readBoard();
-            //SudokuSolver cb = new ChronoBacktracking();
-            //cb.init(OriginalSudoku);
-            //cb.solve();
-            SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
-            cbh.init(OriginalSudoku);
-            cbh.solve();
-
+               // readBoard();
+            for (int i = 0; i < 10; i++)
+            {
+                readBoardFromFile(i);
+                SudokuSolver cb = new ChronoBacktracking();
+                cb.init(OriginalSudoku);
+                cb.solve();
+                SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
+                cbh.init(OriginalSudoku);
+                cbh.solve();
+                Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it);
+                Console.WriteLine("---------------");
+            }
            // cb.print();
             Console.ReadLine();
 

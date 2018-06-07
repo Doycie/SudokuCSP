@@ -56,6 +56,8 @@ namespace SudokuCSP
             }
         }
 
+        public int it = 0;
+
         protected bool check(int place, int num)
         {
 
@@ -93,6 +95,7 @@ namespace SudokuCSP
 
         protected int checkCount(int place)
         {
+
             int restrictions = 0;
             int y = place / N;
             int x = place % N;
@@ -100,15 +103,23 @@ namespace SudokuCSP
             for (int i = 0; i < N; i++)
             {
                 if (board[N * y + i] != 0)
-                    restrictions++;
+                    restrictions |= (1 << board[N * y + i]);
             }
             for (int i = 0; i < N; i++)
             {
                 if (board[N * i + x] != 0)
-                     restrictions++;
+                    restrictions |= (1 << board[N * i + x]);
             }
-
-            return restrictions + NumberInBlockCount( x / B, y / B);
+            restrictions |= RestOfBlockCount( x / B, y / B, place);
+            
+            int restrictionCounts = 0;
+            for (int i = 1; i < N + 1; i++) {
+                if(((restrictions >> i) & 1 )== 1)
+                {
+                    restrictionCounts++;
+                }
+            }
+            return restrictionCounts;
         }
 
         protected int NumberInBlockCount( int xb, int yb)
@@ -121,6 +132,24 @@ namespace SudokuCSP
                     if ( board[j * N + i] != 0)
                     {
                         restrictions++;
+                    }
+                }
+            }
+            return restrictions;
+        }
+
+        protected int RestOfBlockCount(int xb, int yb, int place)
+        {
+            int restrictions = 0;
+            for (int i = xb * B; i < xb * B + B; i++)
+            {
+                for (int j = yb * B; j < yb * B + B; j++)
+                {
+                    int position = j * N + i;
+                    if (board[position] != 0 && (position > place + 2 || position < place - 2) && (position % N != place % N))
+                    {
+                        restrictions |= (1 << board[position]);
+                       
                     }
                 }
             }

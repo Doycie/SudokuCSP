@@ -7,11 +7,11 @@ namespace SudokuCSP
         public override void solve()
         {
             solveRec(0);
-            Console.WriteLine("Score: " + Evaluation()+  " in " + it + " iterations");
-            print();
+           // Console.WriteLine("Score: " + Evaluation()+  " in " + it + " iterations");
+           // print();
         }
 
-        int it = 0;
+
 
         public bool solveRec(int start)
         {
