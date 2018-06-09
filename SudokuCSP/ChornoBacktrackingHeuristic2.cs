@@ -17,13 +17,14 @@ namespace SudokuCSP
             for (int i = 0; i < N *N; i++)
             {
                 
-               // print(i / N, i % N);
-               // Console.WriteLine(checkCount(i));
-              //  Console.ReadLine();
+                //print(i / N, i % N);
+                //Console.WriteLine(checkCount(i));
+                //Console.ReadLine();
                 CSPOrderList.Add( Tuple.Create(i,checkCount(i)));
             }
 
             CSPOrderList.Sort((x, y) =>y.Item2.CompareTo(x.Item2));
+<<<<<<< HEAD
             print();
             solveRec(0);
           //  Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
@@ -31,6 +32,15 @@ namespace SudokuCSP
         }
 
  
+=======
+
+            solveRec(0);
+           // Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
+            //print();
+        }
+
+
+>>>>>>> origin/master
 
         public bool solveRec(int startN)
         {
@@ -40,7 +50,7 @@ namespace SudokuCSP
             {
                 return true;
             }
-            //Console.ReadLine();
+           // Console.ReadLine();
            // Console.Clear();
             it++;
             int start = CSPOrderList[startN].Item1;

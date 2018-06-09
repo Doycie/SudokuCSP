@@ -6,7 +6,10 @@ namespace SudokuCSP
     {
         public override void solve()
         {
+<<<<<<< HEAD
             print();
+=======
+>>>>>>> origin/master
             solveRec(0);
            // Console.WriteLine("Score: " + Evaluation()+  " in " + it + " iterations");
            // print();
