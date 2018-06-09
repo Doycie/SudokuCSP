@@ -32,7 +32,7 @@ namespace SudokuCSP
             print();
         }
 
-        int it = 0;
+
 
         public bool solveRec(int start)
         {
@@ -40,6 +40,7 @@ namespace SudokuCSP
            // Console.ReadLine();
            // Console.Clear();
             print(start/N,start%N);
+
             
 
             if (start == N * N)
@@ -54,6 +55,7 @@ namespace SudokuCSP
                     if (check(start, i))
                     {
                         board[start] = i;
+        
                     }
                     else
                     {
@@ -67,6 +69,7 @@ namespace SudokuCSP
                     else
                     {
                         board[start] = 0;
+                      
                     }
                 }
                 if (board[start] == 0)

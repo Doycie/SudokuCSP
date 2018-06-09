@@ -56,6 +56,8 @@ namespace SudokuCSP
             }
         }
 
+        public int it = 0;
+
         protected bool check(int place, int num)
         {
 
