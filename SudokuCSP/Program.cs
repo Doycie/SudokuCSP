@@ -19,23 +19,7 @@ namespace SudokuCSP
         static void Main(string[] args)
         {
 
-<<<<<<< HEAD
-                //  for (int i = 0; i < 10; i++)
-                // {
-                readBoardFromFile(6);
-                //readBoard();
-                SudokuSolver cb = new ChronoBacktracking();
-                cb.init(OriginalSudoku);
-                cb.solve();
-               // SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
-                //cbh.init(OriginalSudoku);
-                //cbh.solve();
-                //Console.WriteLine("--------- " +  (cbh.it/(float)cb.it));
-                //   }
-                // cb.print();
-                Console.ReadLine();
-=======
-               // readBoard();
+            
             for (int i = 0; i < 10; i++)
             {
                 readBoardFromFile(i);
@@ -50,7 +34,7 @@ namespace SudokuCSP
             }
            // cb.print();
             Console.ReadLine();
->>>>>>> origin/master
+
 
         }
 
