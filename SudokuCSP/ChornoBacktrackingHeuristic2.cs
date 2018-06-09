@@ -1,41 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SudokuCSP
 {
-    class ChornoBacktrackingHeuristic2 : SudokuSolver
+    internal class ChornoBacktrackingHeuristic2 : SudokuSolver
     {
+        private List<Tuple<int, int>> CSPOrderList;
 
-
-        List<Tuple<int,int>> CSPOrderList;
         public override void solve()
         {
-            CSPOrderList = new List<Tuple<int, int>>(N*N+1);
-            for (int i = 0; i < N *N; i++)
+            CSPOrderList = new List<Tuple<int, int>>(N * N + 1);
+            for (int i = 0; i < N * N; i++)
             {
-                
                 //print(i / N, i % N);
                 //Console.WriteLine(checkCount(i));
                 //Console.ReadLine();
-                CSPOrderList.Add( Tuple.Create(i,checkCount(i)));
+                CSPOrderList.Add(Tuple.Create(i, checkCount(i)));
             }
 
-            CSPOrderList.Sort((x, y) =>y.Item2.CompareTo(x.Item2));
+            CSPOrderList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
 
-           // print();
+            // print();
             solveRec(0);
-          
+
             //  Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
             //print();
         }
 
-
         public bool solveRec(int startN)
         {
-           // System.Threading.Thread.Sleep(20);
+            // System.Threading.Thread.Sleep(20);
 
             if (startN == N * N)
             {
@@ -49,16 +43,15 @@ namespace SudokuCSP
 
             if (board[start] == 0)
             {
-                for (int i = 0; i < N+1;i++)
+                for (int i = 0; i < N + 1; i++)
                 {
                     if (check(start, i))
                     {
                         board[start] = i;
 
                         //Console.SetCursorPosition(2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
-                       // Console.Write(i);
+                        // Console.Write(i);
                     }
-
                     else
                     {
                         continue;
@@ -71,7 +64,7 @@ namespace SudokuCSP
                     else
                     {
                         board[start] = 0;
-                       // Console.SetCursorPosition(2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
+                        // Console.SetCursorPosition(2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
                         //Console.Write(0);
                     }
                 }

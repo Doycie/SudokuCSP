@@ -1,24 +1,19 @@
-﻿using System;
-
-namespace SudokuCSP
+﻿namespace SudokuCSP
 {
     internal class ChronoBacktracking : SudokuSolver
     {
         public override void solve()
         {
-           // print();
+            // print();
 
             solveRec(0);
-
         }
-
-
 
         public bool solveRec(int start)
         {
             it++;
-           // System.Threading.Thread.Sleep(20);
-            if (start == N * N )
+            // System.Threading.Thread.Sleep(20);
+            if (start == N * N)
             {
                 return true;
             }
@@ -30,7 +25,7 @@ namespace SudokuCSP
                     if (check(start, i))
                     {
                         board[start] = i;
-                       // Console.SetCursorPosition(  2 + 2*(start%N) + (start%N/3) * 2 ,  (start / N) + 1 + (((start/N)/3)));
+                        // Console.SetCursorPosition(  2 + 2*(start%N) + (start%N/3) * 2 ,  (start / N) + 1 + (((start/N)/3)));
                         //Console.Write(i);
                     }
                     else
@@ -45,11 +40,11 @@ namespace SudokuCSP
                     else
                     {
                         board[start] = 0;
-                       // Console.SetCursorPosition( 2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
+                        // Console.SetCursorPosition( 2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
                         //Console.Write(0);
                     }
                 }
-                if (board[start] == 0 )
+                if (board[start] == 0)
                 {
                     return false;
                 }

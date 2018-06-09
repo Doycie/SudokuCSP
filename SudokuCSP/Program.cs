@@ -1,45 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SudokuCSP
 {
-    class Program
+    internal class Program
     {
-
-
         //Int array to save the original input board
         private static int[,] OriginalSudoku;
 
-
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
 
-            
-            for (int i = 0; i < 10; i++)
-            {
-                readBoardFromFile(i);
-                SudokuSolver cb = new ChronoBacktracking();
-                cb.init(OriginalSudoku);
-                cb.solve();
-                SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
-                cbh.init(OriginalSudoku);
-                cbh.solve();
-                Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it);
-                Console.WriteLine("---------------");
-            }
-           // cb.print();
+
+            readBoardFromFile(1);
+            SudokuSolver s = new ForwardChecking();
+            s.init(OriginalSudoku);
+            s.solve();
+           
+
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    readBoardFromFile(i);
+            //    SudokuSolver cb = new ChronoBacktracking();
+            //    cb.init(OriginalSudoku);
+            //    cb.solve();
+            //    SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
+            //    cbh.init(OriginalSudoku);
+            //    cbh.solve();
+            //    Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it);
+            //    Console.WriteLine("---------------");
+            //}
+            // cb.print();
             Console.ReadLine();
-
-
         }
-
-
-
 
         //Function to read the board from a text file. Make sure there are spaces at the end
         private static int readBoardFromFile(int a)

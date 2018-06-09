@@ -2,7 +2,7 @@
 
 namespace SudokuCSP
 {
-     abstract class SudokuSolver
+    internal abstract class SudokuSolver
     {
         protected const int N = 9;
         protected const int B = 3;
@@ -60,7 +60,6 @@ namespace SudokuCSP
 
         protected bool check(int place, int num)
         {
-
             int y = place / N;
             int x = place % N;
 
@@ -80,9 +79,9 @@ namespace SudokuCSP
 
         protected bool NumberInBlock(int n, int xb, int yb)
         {
-            for (int i = xb*B; i < xb*B + B; i++)
+            for (int i = xb * B; i < xb * B + B; i++)
             {
-                for (int j = yb*B; j < yb*B + B; j++)
+                for (int j = yb * B; j < yb * B + B; j++)
                 {
                     if (n == board[j * N + i])
                     {
@@ -95,7 +94,6 @@ namespace SudokuCSP
 
         protected int checkCount(int place)
         {
-
             int restrictions = 0;
             int y = place / N;
             int x = place % N;
@@ -110,11 +108,12 @@ namespace SudokuCSP
                 if (board[N * i + x] != 0)
                     restrictions |= (1 << board[N * i + x]);
             }
-            restrictions |= RestOfBlockCount( x / B, y / B, place);
-            
+            restrictions |= RestOfBlockCount(x / B, y / B, place);
+
             int restrictionCounts = 0;
-            for (int i = 1; i < N + 1; i++) {
-                if(((restrictions >> i) & 1 )== 1)
+            for (int i = 1; i < N + 1; i++)
+            {
+                if (((restrictions >> i) & 1) == 1)
                 {
                     restrictionCounts++;
                 }
@@ -122,14 +121,14 @@ namespace SudokuCSP
             return restrictionCounts;
         }
 
-        protected int NumberInBlockCount( int xb, int yb)
+        protected int NumberInBlockCount(int xb, int yb)
         {
             int restrictions = 0;
             for (int i = xb * B; i < xb * B + B; i++)
             {
                 for (int j = yb * B; j < yb * B + B; j++)
                 {
-                    if ( board[j * N + i] != 0)
+                    if (board[j * N + i] != 0)
                     {
                         restrictions++;
                     }
@@ -149,13 +148,11 @@ namespace SudokuCSP
                     if (board[position] != 0 && (position > place + 2 || position < place - 2) && (position % N != place % N))
                     {
                         restrictions |= (1 << board[position]);
-                       
                     }
                 }
             }
             return restrictions;
         }
-
 
         //Method to count the amount of missing numbers in a row, only used in the evaluation function
         private int CountMissingNumbersC(int i, ref int[] board)

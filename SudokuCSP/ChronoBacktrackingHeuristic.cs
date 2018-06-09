@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SudokuCSP
 {
-    class ChronoBacktrackingHeuristic : SudokuSolver
+    internal class ChronoBacktrackingHeuristic : SudokuSolver
     {
-        int[] CSPOrderList;
+        private int[] CSPOrderList;
+
         public override void solve()
         {
             Dictionary<int, int> occurrences = new Dictionary<int, int>();
-            for(int i = 1; i < N + 1; i++)
+            for (int i = 1; i < N + 1; i++)
             {
                 occurrences.Add(i, 0);
             }
 
-            for(int i = 0; i < N * N; i++)
+            for (int i = 0; i < N * N; i++)
             {
                 if (board[i] != 0)
                     occurrences[board[i]] = occurrences[board[i]] + 1;
             }
-           
+
             var CSPOrderListT = occurrences.ToList();
             CSPOrderListT.Sort((x, y) => x.Value.CompareTo(y.Value));
             CSPOrderList = CSPOrderListT.Select(kvp => kvp.Key).ToArray();
@@ -35,11 +34,9 @@ namespace SudokuCSP
         public bool solveRec(int start)
         {
             it++;
-           // Console.ReadLine();
-           // Console.Clear();
-            print(start/N,start%N);
-
-            
+            // Console.ReadLine();
+            // Console.Clear();
+            print(start / N, start % N);
 
             if (start == N * N)
             {
@@ -53,7 +50,6 @@ namespace SudokuCSP
                     if (check(start, i))
                     {
                         board[start] = i;
-        
                     }
                     else
                     {
@@ -67,7 +63,6 @@ namespace SudokuCSP
                     else
                     {
                         board[start] = 0;
-                      
                     }
                 }
                 if (board[start] == 0)
