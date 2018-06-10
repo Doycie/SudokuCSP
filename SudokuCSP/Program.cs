@@ -12,7 +12,7 @@ namespace SudokuCSP
         {
 
 
-            readBoardFromFile(1);
+            readBoardFromFile(0);
             SudokuSolver s = new ForwardChecking();
             s.init(OriginalSudoku);
             s.solve();
