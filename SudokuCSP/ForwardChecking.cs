@@ -82,7 +82,7 @@ namespace SudokuCSP
             {
                 if (board[N * y + i] == 0)
                 {
-                    if ((domain[N * y + i] >> num) == 1)
+                    if (((domain[N * y + i] >> num) & 1) == 1)
                         changes.Add(N * y + i);
                     domain[N * y + i] &= ~(1 << num);
                 }
@@ -91,7 +91,7 @@ namespace SudokuCSP
             {
                 if (board[N * i + x] == 0)
                 {
-                    if ((domain[N * i + x] >> num) == 1)
+                    if (((domain[N * i + x] >> num) & 1) == 1)
                         changes.Add(N * i + x);
                     domain[N * i + x] &= ~(1 << num);
                 }
@@ -105,7 +105,7 @@ namespace SudokuCSP
                 {
                     if (board[j * N + i] == 0)
                     {
-                        if ((domain[j * N + i] >> num) == 1)
+                        if (((domain[j * N + i] >> num) & 1) == 1)
                             changes.Add(j * N + i);
                         domain[j * N + i] &= ~(1 << num);
                     }
@@ -142,10 +142,23 @@ namespace SudokuCSP
                         board[start] = i;
                         changes = RemoveFromDomains(start, i);
 
+                        bool verkeerd = false;
                         for(int k = 0;k < N * N; k++)
                         {
                             if (domain[k] == 0 && board[k] == 0)
-                                return false;
+                            {
+                                foreach (int p in changes)
+                                {
+                                    domain[p] |= (1 << i);
+                                }
+                                board[start] = 0;
+                                verkeerd = true;
+                                break;
+                            }
+                        }
+                        if(verkeerd)
+                        {
+                                continue;
                         }
 
 
