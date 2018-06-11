@@ -33,12 +33,12 @@ namespace SudokuCSP
 
         protected override bool solveRec(int startN)
         {
-
             it++;
             if (startN == N * N)
             {
                 return true;
             }
+
             int bestStart = 0;
             int bestsoffar =10;
             for (int i = 0; i < domain.Length; i++)
@@ -67,38 +67,65 @@ namespace SudokuCSP
                 {
                     if (((domain[start] >> i) & 1) == 1)
                     {
-                        List<int> changes;
+                        List<Tuple<int, int>> changes;
 
                         board[start] = i;
                         changes = RemoveFromDomains(start, i);
+                        bool verandering = true;
+                        bool gaatGoed = true;
+                        int numberOfChanges = changes.Count();
 
-                        bool verkeerd = false;
-                        for (int k = 0; k < N * N; k++)
-
+                        while (verandering && gaatGoed)
                         {
-                            if (domain[k] == 0 && board[k] == 0)
+                            for (int k = 0; k < N * N; k++)
                             {
-                                foreach (int p in changes)
+                                if (domain[k] == 0 && board[k] == 0)
                                 {
-                                    domain[p] |= (1 << i);
+                                    foreach (Tuple<int, int> p in changes)
+                                    {
+                                        domain[p.Item1] |= (1 << p.Item2);
+                                        board[p.Item1] = 0;
+                                    }
+                                    board[start] = 0;
+                                    gaatGoed = false;
+                                    break;
                                 }
-                                board[start] = 0;
-                                verkeerd = true;
-                                break;
                             }
+                            if (gaatGoed)
+                            {
+                                foreach (Tuple<int, int> p in changes)
+                                {
+                                    if (IsPowerOfTwo(domain[p.Item1]))
+                                    {
+                                        int optie = (int)Math.Log(domain[p.Item1], 2);
+                                        board[p.Item1] = optie;
+                                        changes.AddRange(RemoveFromDomains(p.Item1, optie));
+                                        break;
+                                    }
+                                }
+                            }
+
+                            verandering = false;
+                            if (changes.Count() > numberOfChanges)
+                            {
+                                verandering = true;
+                                numberOfChanges = changes.Count();
+                            }
+
                         }
-                        if (verkeerd)
+                        if (!gaatGoed)
                             continue;
 
 
-                       
+
                         if (solveRec(startN + 1))
                             return true;
                         else
                         {
-                            foreach (int k in changes)
+                            foreach (Tuple<int, int> p in changes)
                             {
-                                domain[k] |= (1 << i);
+                                domain[p.Item1] |= (1 << p.Item2);
+                                board[p.Item1] = 0;
                             }
                             board[start] = 0;
                         }

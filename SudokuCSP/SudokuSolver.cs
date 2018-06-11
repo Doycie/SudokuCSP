@@ -219,5 +219,10 @@ namespace SudokuCSP
             }
             return total;
         }
+
+        protected bool IsPowerOfTwo(int number)
+        {
+            return (number != 0) && ((number & (number - 1)) == 0);
+        }
     }
 }

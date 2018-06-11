@@ -26,7 +26,7 @@ namespace SudokuCSP
                 SudokuSolver fc = new ForwardChecking();
                 fc.init(OriginalSudoku);
                 fc.solve();
-
+                
                 SudokuSolver fch = new ForwardCheckingHeuristic();
                 fch.init(OriginalSudoku);
                 fch.solve();

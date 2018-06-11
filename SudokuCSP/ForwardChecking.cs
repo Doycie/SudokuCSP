@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SudokuCSP
 {
@@ -62,19 +63,19 @@ namespace SudokuCSP
             }
         }
 
-        protected List<int> RemoveFromDomains(int place, int num)
+        protected List<Tuple<int, int>> RemoveFromDomains(int place, int num)
         {
             int y = place / N;
             int x = place % N;
 
-            List<int> changes = new List<int>();
+            List<Tuple<int, int>> changes = new List<Tuple<int, int>>();
 
             for (int i = 0; i < N; i++)
             {
                 if (board[N * y + i] == 0)
                 {
                     if (((domain[N * y + i] >> num) & 1) == 1)
-                        changes.Add(N * y + i);
+                        changes.Add(Tuple.Create(N * y + i, num));
                     domain[N * y + i] &= ~(1 << num);
                 }
             }
@@ -83,7 +84,7 @@ namespace SudokuCSP
                 if (board[N * i + x] == 0)
                 {
                     if (((domain[N * i + x] >> num) & 1) == 1)
-                        changes.Add(N * i + x);
+                        changes.Add(Tuple.Create(N * i + x, num));
                     domain[N * i + x] &= ~(1 << num);
                 }
             }
@@ -97,7 +98,7 @@ namespace SudokuCSP
                     if (board[j * N + i] == 0)
                     {
                         if (((domain[j * N + i] >> num) & 1) == 1)
-                            changes.Add(j * N + i);
+                            changes.Add(Tuple.Create(j * N + i, num));
                         domain[j * N + i] &= ~(1 << num);
                     }
                 }
@@ -109,7 +110,6 @@ namespace SudokuCSP
 
         protected virtual bool solveRec(int start)
         {
-
             it++;
             if (start == N * N)
             {
@@ -122,41 +122,63 @@ namespace SudokuCSP
                 {
                     if (((domain[start] >> i) & 1) == 1)
                     {
-                        List<int> changes;
+                        List<Tuple<int, int>> changes;
 
                         board[start] = i;
                         changes = RemoveFromDomains(start, i);
+                        bool verandering = true;
+                        bool gaatGoed = true;
+                        int numberOfChanges = changes.Count();
 
-                        bool verkeerd = false;
-                        for (int k = 0; k < N * N; k++)
-
+                        while (verandering && gaatGoed)
                         {
-                            if (domain[k] == 0 && board[k] == 0)
+                            for (int k = 0; k < N * N; k++)
                             {
-                                foreach (int p in changes)
+                                if (domain[k] == 0 && board[k] == 0)
                                 {
-                                    domain[p] |= (1 << i);
+                                    foreach (Tuple<int, int> p in changes)
+                                    {
+                                        domain[p.Item1] |= (1 << p.Item2);
+                                        board[p.Item1] = 0;
+                                    }
+                                    board[start] = 0;
+                                    gaatGoed = false;
+                                    break;
                                 }
-                                board[start] = 0;
-                                verkeerd = true;
-                                break;
                             }
-                        }
-                        if (verkeerd)
-                        {
-                            continue;
-                        }
+                            if(gaatGoed)
+                            {
+                                foreach(Tuple<int, int> p in changes)
+                                {
+                                    if(IsPowerOfTwo(domain[p.Item1]))
+                                    {
+                                        int optie = (int)Math.Log(domain[p.Item1], 2);
+                                        board[p.Item1] = optie;
+                                        changes.AddRange(RemoveFromDomains(p.Item1, optie));
+                                        break;
+                                    }
+                                }
+                            }
 
-                        bool result = solveRec(start + 1);
-                        if (result == true)
-                        {
-                            return true;
+                            verandering = false;
+                            if (changes.Count() > numberOfChanges)
+                            {
+                                verandering = true;
+                                numberOfChanges = changes.Count();
+                            }
+
                         }
+                        if (!gaatGoed)
+                            continue;
+
+                        if(solveRec(start + 1))
+                            return true;                    
                         else
                         {
-                            foreach (int k in changes)
+                            foreach (Tuple<int, int> p in changes)
                             {
-                                domain[k] |= (1 << i);
+                                domain[p.Item1] |= (1 << p.Item2);
+                                board[p.Item1] = 0;
                             }
                             board[start] = 0;
                         }
@@ -165,11 +187,11 @@ namespace SudokuCSP
             }
             else
             {
-                bool result = solveRec(start + 1);
-                return result;
+                return solveRec(start + 1);
             }
 
             return false;
         }
+
     }
 }
