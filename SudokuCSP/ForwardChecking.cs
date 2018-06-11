@@ -10,35 +10,26 @@ namespace SudokuCSP
             domain = new int[N * N];
 
             //Fill all domain values with numbers 1-9
-            for(int i = 0; i <  N*N; i++)
+            for (int i = 0; i < N * N; i++)
             {
-                domain[i] = 0;
-                
-                for(int j = 1; j < N + 1; j++)
-                {
-                    domain[i] |= (1 << j);
-                }
+                domain[i] = 1022;
+
+                //for (int j = 1; j < N + 1; j++)
+                //{
+                //    domain[i] |= (1 << j);
+                //}
             }
 
-            for(int i = 0; i < N*N; i++)
+            for (int i = 0; i < N * N; i++)
             {
-                if(board[i] != 0)
+                if (board[i] != 0)
                 {
                     domain[i] = 0;
 
                     RemoveFromDomains(i, board[i]);
-
-
                 }
-
-
             }
-
-            printD();
-            print();
-
             solveRec(0);
-   
         }
 
         public void printD()
@@ -61,7 +52,7 @@ namespace SudokuCSP
                                 Console.Write(" ");
                     }
                     Console.Write("|");
-                    
+
                     if (j == N - 1)
                         Console.Write("||");
                 }
@@ -76,7 +67,7 @@ namespace SudokuCSP
             int y = place / N;
             int x = place % N;
 
-            List< int> changes = new List<int>();
+            List<int> changes = new List<int>();
 
             for (int i = 0; i < N; i++)
             {
@@ -114,15 +105,10 @@ namespace SudokuCSP
             return changes;
         }
 
+        protected int[] domain;
 
-        int[] domain;
-
-        public bool solveRec(int start)
+        protected virtual bool solveRec(int start)
         {
-            Console.Clear();
-            printD();
-            print();
-            Console.ReadLine();
 
             it++;
             if (start == N * N)
@@ -137,13 +123,13 @@ namespace SudokuCSP
                     if (((domain[start] >> i) & 1) == 1)
                     {
                         List<int> changes;
-                        //int temp = domain[start];
 
                         board[start] = i;
                         changes = RemoveFromDomains(start, i);
 
                         bool verkeerd = false;
-                        for(int k = 0;k < N * N; k++)
+                        for (int k = 0; k < N * N; k++)
+
                         {
                             if (domain[k] == 0 && board[k] == 0)
                             {
@@ -156,11 +142,10 @@ namespace SudokuCSP
                                 break;
                             }
                         }
-                        if(verkeerd)
+                        if (verkeerd)
                         {
-                                continue;
+                            continue;
                         }
-
 
                         bool result = solveRec(start + 1);
                         if (result == true)
@@ -169,17 +154,13 @@ namespace SudokuCSP
                         }
                         else
                         {
-                            foreach(int k in changes)
+                            foreach (int k in changes)
                             {
                                 domain[k] |= (1 << i);
                             }
-                            //domain[start] = temp;
                             board[start] = 0;
-                            // Console.SetCursorPosition( 2 + 2 * (start % N) + (start % N / 3) * 2, (start / N) + 1 + (((start / N) / 3)));
-                            //Console.Write(0);
                         }
                     }
-
                 }
             }
             else

@@ -1,81 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SudokuCSP
 {
     internal class ChronoBacktrackingHeuristic : SudokuSolver
     {
-        private int[] CSPOrderList;
+        private List<Tuple<int, int>> CSPOrderList;
 
         public override void solve()
         {
-            Dictionary<int, int> occurrences = new Dictionary<int, int>();
-            for (int i = 1; i < N + 1; i++)
-            {
-                occurrences.Add(i, 0);
-            }
-
+            //We make a list of tuples of ints to keep track of which square has the most restrictions next. The first element is the position of the block and the second the amount of restrictions
+            CSPOrderList = new List<Tuple<int, int>>(N * N + 1);
             for (int i = 0; i < N * N; i++)
             {
-                if (board[i] != 0)
-                    occurrences[board[i]] = occurrences[board[i]] + 1;
+
+                CSPOrderList.Add(Tuple.Create(i, checkCount(i)));
             }
 
-            var CSPOrderListT = occurrences.ToList();
-            CSPOrderListT.Sort((x, y) => x.Value.CompareTo(y.Value));
-            CSPOrderList = CSPOrderListT.Select(kvp => kvp.Key).ToArray();
+            CSPOrderList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
 
             solveRec(0);
-            Console.WriteLine("Score: " + Evaluation() + " in " + it + " iterations");
-            print();
+
         }
 
-        public bool solveRec(int start)
+        public bool solveRec(int startN)
         {
-            it++;
-            // Console.ReadLine();
-            // Console.Clear();
-            print(start / N, start % N);
-
-            if (start == N * N)
-            {
+            //If we reached the end stop
+            if (startN == N * N)
                 return true;
-            }
 
+            it++;
+            //Get the next item from the sorted list
+            int start = CSPOrderList[startN].Item1;
+
+            //If it is a position we can fill in try to fill it in
             if (board[start] == 0)
             {
-                foreach (int i in CSPOrderList)
+                //Go over every number to try and fill it in
+                for (int i = 0; i < N + 1; i++)
                 {
+                    //If it is possible go with it and go into recursion for the next, else try the next number
                     if (check(start, i))
-                    {
                         board[start] = i;
-                    }
                     else
-                    {
                         continue;
-                    }
-                    bool result = solveRec(start + 1);
-                    if (result == true)
-                    {
+
+                    //Return 
+                    if (solveRec(startN + 1))
                         return true;
-                    }
                     else
-                    {
                         board[start] = 0;
-                    }
-                }
-                if (board[start] == 0)
-                {
-                    return false;
+
                 }
             }
             else
-            {
-                bool result = solveRec(start + 1);
-                return result;
-            }
-
+                 return solveRec(startN + 1);
+                
             return false;
         }
     }

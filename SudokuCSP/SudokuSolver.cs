@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace SudokuCSP
 {
@@ -12,6 +13,8 @@ namespace SudokuCSP
 
         //Local copy of the numbers that are fixed for easy lookup
         protected int[] fixedboard;
+
+        protected Stopwatch swatch = new Stopwatch();
 
         //Initialize the sudoku by setting the size and the local copies of the board
         public void init(int[,] b)
@@ -29,6 +32,7 @@ namespace SudokuCSP
             }
         }
 
+        //Abstract solve function called from program
         public abstract void solve();
 
         //Print the current board, you can mark two numbers by the argument, they will be colored
@@ -58,32 +62,33 @@ namespace SudokuCSP
 
         public int it = 0;
 
+        //Check if a number can be placed at a certain position used in chronological backtracking
         protected bool check(int place, int num)
         {
             int y = place / N;
             int x = place % N;
-
+            
+            //Go over the row
             for (int i = 0; i < N; i++)
             {
                 if (board[N * y + i] == num)
                     return false;
             }
+            //Go over the column
             for (int i = 0; i < N; i++)
             {
                 if (board[N * (i) + x] == num)
                     return false;
             }
+            //Go over the 3x3 block
+            int xb = x / B;
+            int yb = y / B;
 
-            return NumberInBlock(num, x / B, y / B);
-        }
-
-        protected bool NumberInBlock(int n, int xb, int yb)
-        {
             for (int i = xb * B; i < xb * B + B; i++)
             {
                 for (int j = yb * B; j < yb * B + B; j++)
                 {
-                    if (n == board[j * N + i])
+                    if (num == board[j * N + i])
                     {
                         return false;
                     }
@@ -92,24 +97,30 @@ namespace SudokuCSP
             return true;
         }
 
+        //Count the amount of restrictions we have, so bassically the unique numbers from a position in its rows columns and block
         protected int checkCount(int place)
         {
             int restrictions = 0;
             int y = place / N;
             int x = place % N;
 
+
+            //Set bits at the position of the numbers we find in the row
             for (int i = 0; i < N; i++)
             {
                 if (board[N * y + i] != 0)
                     restrictions |= (1 << board[N * y + i]);
             }
+            //Set bits at the position of the numbers we find in the column
             for (int i = 0; i < N; i++)
             {
                 if (board[N * i + x] != 0)
                     restrictions |= (1 << board[N * i + x]);
             }
+            //Set bits at the position of the numbers we find in the block
             restrictions |= RestOfBlockCount(x / B, y / B, place);
 
+            //Count all the unique restrictions
             int restrictionCounts = 0;
             for (int i = 1; i < N + 1; i++)
             {
@@ -121,6 +132,7 @@ namespace SudokuCSP
             return restrictionCounts;
         }
 
+        //Helper function for counting the restrictions in a block
         protected int NumberInBlockCount(int xb, int yb)
         {
             int restrictions = 0;
@@ -137,6 +149,7 @@ namespace SudokuCSP
             return restrictions;
         }
 
+        //Helper function for counting the restrictions in ablock without counting the row and column
         protected int RestOfBlockCount(int xb, int yb, int place)
         {
             int restrictions = 0;

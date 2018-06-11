@@ -12,26 +12,30 @@ namespace SudokuCSP
         {
 
 
-            readBoardFromFile(0);
-            SudokuSolver s = new ForwardChecking();
-            s.init(OriginalSudoku);
-            s.solve();
-           
+            Console.WriteLine("\t|CB|\t|CBH\t|FC|\t|FCH|");
+            
+            for (int i = 0; i < 11; i++)
+            {
+                readBoardFromFile(i);
+                SudokuSolver cb = new ChronoBacktracking();
+                cb.init(OriginalSudoku);
+                cb.solve();
+                SudokuSolver cbh = new ChronoBacktrackingHeuristic();
+                cbh.init(OriginalSudoku);
+                cbh.solve();
+                SudokuSolver fc = new ForwardChecking();
+                fc.init(OriginalSudoku);
+                fc.solve();
 
+                SudokuSolver fch = new ForwardCheckingHeuristic();
+                fch.init(OriginalSudoku);
+                fch.solve();
 
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    readBoardFromFile(i);
-            //    SudokuSolver cb = new ChronoBacktracking();
-            //    cb.init(OriginalSudoku);
-            //    cb.solve();
-            //    SudokuSolver cbh = new ChornoBacktrackingHeuristic2();
-            //    cbh.init(OriginalSudoku);
-            //    cbh.solve();
-            //    Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it);
-            //    Console.WriteLine("---------------");
-            //}
-            // cb.print();
+                Console.WriteLine(i + ".\t" + cb.it + "\t" + cbh.it + "\t" + fc.it + "\t" + fch.it );
+                //Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it + " and with forward checking in: " + fc.it +" and with fw heuristic: " + fch.it);
+             
+            }
+
             Console.ReadLine();
         }
 
