@@ -15,11 +15,11 @@
                 return true;
 
             //Count the iterations
-            it++;
 
             //If we can fill in numbers lets try, else just continue to the next square
             if (board[start] == 0)
             {
+                it++;
                 //Go over every number we can fill in
                 for (int i = 1; i < N + 1; i++)
                 {
@@ -29,7 +29,7 @@
                     else
                         continue;
 
-                    //If the next thing we try works out till the end return true, we have solvedd the sudoku. Else reset the board 
+                    //If the next thing we try works out till the end return true, we have solvedd the sudoku. Else reset the board
                     if (solveRec(start + 1))
                         return true;
                     else
@@ -37,7 +37,7 @@
                 }
             }
             else
-               return  solveRec(start + 1);
+                return solveRec(start + 1);
 
             return false;
         }

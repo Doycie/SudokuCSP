@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SudokuCSP
 {
-    internal class ChronoBacktrackingHeuristic : SudokuSolver
+    internal class ChronoBacktrackingLokaalHeuristic : SudokuSolver
     {
         private List<Tuple<int, int>> CSPOrderList;
 
@@ -11,12 +11,17 @@ namespace SudokuCSP
         {
             //We make a list of tuples of ints to keep track of which square has the most restrictions next. The first element is the position of the block and the second the amount of restrictions
             CSPOrderList = new List<Tuple<int, int>>(N * N + 1);
-            for (int i = 0; i < N * N; i++)
-            {
-                CSPOrderList.Add(Tuple.Create(i, checkCount(i)));
-            }
 
-            CSPOrderList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+            for (int i = 0; i < N; i++)
+            {
+                var tempList = new List<Tuple<int, int>>(N);
+                for (int j = 0; j < N; j++)
+                {
+                    tempList.Add(Tuple.Create(((i % 3) * (N * 3)) + ((i / 3) * 3) + ((j % 3) * N) + (j / 3), checkCount(((i % 3) * (N * 3)) + ((i / 3) * 3) + ((j % 3) * N) + (j / 3))));
+                }
+                tempList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                CSPOrderList.AddRange(tempList);
+            }
 
             solveRec(0);
         }

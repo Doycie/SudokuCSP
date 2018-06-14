@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace SudokuCSP
 {
-    internal abstract class SudokuSolver
+    public abstract class SudokuSolver
     {
         protected const int N = 9;
         protected const int B = 3;
@@ -60,6 +60,27 @@ namespace SudokuCSP
             }
         }
 
+        public void printCount()
+        {
+            Console.WriteLine("-------------------------");
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if ((j) % 3 == 0)
+                        Console.Write("| ");
+
+                    Console.Write(checkCount(i * N + j) + " ");
+                    Console.ResetColor();
+                    if (j == N - 1)
+                        Console.Write("|");
+                }
+                Console.WriteLine();
+                if ((i) % 3 == 2)
+                    Console.WriteLine("-------------------------");
+            }
+        }
+
         public int it = 0;
 
         //Check if a number can be placed at a certain position used in chronological backtracking
@@ -67,7 +88,7 @@ namespace SudokuCSP
         {
             int y = place / N;
             int x = place % N;
-            
+
             //Go over the row
             for (int i = 0; i < N; i++)
             {
@@ -103,7 +124,6 @@ namespace SudokuCSP
             int restrictions = 0;
             int y = place / N;
             int x = place % N;
-
 
             //Set bits at the position of the numbers we find in the row
             for (int i = 0; i < N; i++)
@@ -204,7 +224,7 @@ namespace SudokuCSP
         }
 
         //Evaluation function counts how many numbers are missing in each row and column, the lower the better
-        protected int Evaluation()
+        public int Evaluation()
         {
             int total = 0;
             //Count each row
