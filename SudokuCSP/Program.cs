@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace SudokuCSP
 {
@@ -13,6 +14,63 @@ namespace SudokuCSP
         {
             //  Console.WriteLine("\t|CB|\t|CBH\t|FC|\t|FCH|");
 
+            List<SudokuSolver> solvers = new List<SudokuSolver>();
+            solvers.Add( new ChronoBacktracking());
+            solvers.Add(new ChronoBacktrackingHeuristic());
+            solvers.Add( new ChronoBacktrackingLokaalHeuristic());
+            solvers.Add( new ForwardChecking());
+            solvers.Add( new ForwardCheckingHeuristic());
+            solvers.Add( new ForwardCheckingLookahead());
+            solvers.Add( new ForwardCheckingLookaheadHeuristic());
+
+            
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Type the number of the solver you want to use?");
+                int i = 1;
+                foreach (SudokuSolver s in solvers)
+                {
+                    Console.WriteLine(i + ". " + s.ToString());
+                    i++;
+                }
+
+                int pickedSolver = int.Parse(Console.ReadLine()) - 1;
+
+                Console.Clear();
+                Console.WriteLine("How do you want to input the sudoku?");
+                Console.WriteLine("1. Manually");
+                Console.WriteLine("2. Choose one of the ten from the sudoku text file");
+
+                int pickedInputMethod = int.Parse(Console.ReadLine()) - 1;
+                Console.Clear();
+                if (pickedInputMethod == 0)
+                {
+                    Console.WriteLine("Copy the sudoku in the console then press enter twice.");
+                    readBoard();
+                }
+                else
+                {
+                    Console.WriteLine("Which sudoku do you want 1-10?");
+                    readBoardFromFile(int.Parse(Console.ReadLine()) - 1);
+
+                }
+
+                Console.Clear();
+
+                solvers[pickedSolver].init(OriginalSudoku);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                solvers[pickedSolver].solve();
+                sw.Stop();
+
+                Console.WriteLine("Solved the sudoku with " + solvers[pickedSolver].ToString()+ " in: " + sw.Elapsed.TotalMilliseconds + "ms" + " and " + solvers[pickedSolver].it + "iterations.");
+                solvers[pickedSolver].print();
+                Console.WriteLine("press enter to go again");
+            } while (Console.ReadLine() == "");
+            Console.ReadLine();
+
+            /*
             SudokuSolver cb = new ChronoBacktracking();
             SudokuSolver cbh = new ChronoBacktrackingHeuristic();
             SudokuSolver cbht = new ChronoBacktrackingLokaalHeuristic();
@@ -20,7 +78,6 @@ namespace SudokuCSP
             SudokuSolver fch = new ForwardCheckingHeuristic();
             SudokuSolver fcl = new ForwardCheckingLookahead();
             SudokuSolver fclh = new ForwardCheckingLookaheadHeuristic();
-            
 
             runsudoku(cb);
             runsudoku(cbh);
@@ -33,11 +90,10 @@ namespace SudokuCSP
             runsudoku(fclh);
             (fclh as ForwardCheckingLookaheadHeuristic).makeConsistentb = true;
             runsudoku(fclh);
-
+            */
             //    Console.WriteLine(i + ".\t" + cb.it + "\t" + cbh.it + "\t" + fc.it + "\t" + fch.it );
             //Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it + " and with forward checking in: " + fc.it +" and with fw heuristic: " + fch.it);
 
-            Console.ReadLine();
         }
 
         static public void runsudoku(SudokuSolver s)
