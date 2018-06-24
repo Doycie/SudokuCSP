@@ -47,8 +47,8 @@
     <Compile Include="ChronoBacktracking.cs" />
     <Compile Include="ForwardChecking.cs" />
     <Compile Include="ForwardCheckingHeuristic.cs" />
-    <Compile Include="ForwardCheckingLookahead.cs" />
-    <Compile Include="ForwardCheckingLookaheadHeuristic.cs" />
+    <Compile Include="MAC.cs" />
+    <Compile Include="MACHeuristic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SudokuSolver.cs" />

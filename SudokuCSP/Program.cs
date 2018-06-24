@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 
 namespace SudokuCSP
 {
@@ -14,16 +14,16 @@ namespace SudokuCSP
         {
             //  Console.WriteLine("\t|CB|\t|CBH\t|FC|\t|FCH|");
 
+            //Initialize the solvers
             List<SudokuSolver> solvers = new List<SudokuSolver>();
-            solvers.Add( new ChronoBacktracking());
+            solvers.Add(new ChronoBacktracking());
             solvers.Add(new ChronoBacktrackingHeuristic());
-            solvers.Add( new ChronoBacktrackingLokaalHeuristic());
-            solvers.Add( new ForwardChecking());
-            solvers.Add( new ForwardCheckingHeuristic());
-            solvers.Add( new ForwardCheckingLookahead());
-            solvers.Add( new ForwardCheckingLookaheadHeuristic());
+            solvers.Add(new ChronoBacktrackingLokaalHeuristic());
+            solvers.Add(new ForwardChecking());
+            solvers.Add(new ForwardCheckingHeuristic());
+            solvers.Add(new MACHeuristic());
 
-            
+            //Keep solving sudokus
             do
             {
                 Console.Clear();
@@ -36,11 +36,17 @@ namespace SudokuCSP
                 }
 
                 int pickedSolver = int.Parse(Console.ReadLine()) - 1;
+                if (pickedSolver < 0 || pickedSolver > 5)
+                {
+                    Console.WriteLine("Not a valid solver");
+                    System.Threading.Thread.Sleep(1000);
+                    continue;
+                }
 
                 Console.Clear();
                 Console.WriteLine("How do you want to input the sudoku?");
                 Console.WriteLine("1. Manually");
-                Console.WriteLine("2. Choose one of the ten from the sudoku text file");
+                Console.WriteLine("2. Choose one of the eleven from the sudoku text file");
 
                 int pickedInputMethod = int.Parse(Console.ReadLine()) - 1;
                 Console.Clear();
@@ -51,9 +57,9 @@ namespace SudokuCSP
                 }
                 else
                 {
-                    Console.WriteLine("Which sudoku do you want 1-10?");
-                    readBoardFromFile(int.Parse(Console.ReadLine()) - 1);
+                    Console.WriteLine("Which sudoku do you want 1-11?");
 
+                    readBoardFromFile(int.Parse(Console.ReadLine()) - 1);
                 }
 
                 Console.Clear();
@@ -64,62 +70,62 @@ namespace SudokuCSP
                 solvers[pickedSolver].solve();
                 sw.Stop();
 
-                Console.WriteLine("Solved the sudoku with " + solvers[pickedSolver].ToString()+ " in: " + sw.Elapsed.TotalMilliseconds + "ms" + " and " + solvers[pickedSolver].it + "iterations.");
+                Console.WriteLine("Solved the sudoku with " + solvers[pickedSolver].ToString() + " in: " + sw.Elapsed.TotalMilliseconds + "ms" + " and " + solvers[pickedSolver].it + " iterations.");
                 solvers[pickedSolver].print();
                 Console.WriteLine("press enter to go again");
             } while (Console.ReadLine() == "");
             Console.ReadLine();
 
-            /*
             SudokuSolver cb = new ChronoBacktracking();
             SudokuSolver cbh = new ChronoBacktrackingHeuristic();
             SudokuSolver cbht = new ChronoBacktrackingLokaalHeuristic();
             SudokuSolver fc = new ForwardChecking();
             SudokuSolver fch = new ForwardCheckingHeuristic();
-            SudokuSolver fcl = new ForwardCheckingLookahead();
-            SudokuSolver fclh = new ForwardCheckingLookaheadHeuristic();
+            SudokuSolver fclh = new MACHeuristic();
 
             runsudoku(cb);
             runsudoku(cbh);
             runsudoku(cbht);
             runsudoku(fc);
             runsudoku(fch);
-            runsudoku(fcl);
-            (fcl as ForwardCheckingLookahead).makeConsistentb = true;
-            runsudoku(fcl);
             runsudoku(fclh);
-            (fclh as ForwardCheckingLookaheadHeuristic).makeConsistentb = true;
-            runsudoku(fclh);
-            */
-            //    Console.WriteLine(i + ".\t" + cb.it + "\t" + cbh.it + "\t" + fc.it + "\t" + fch.it );
-            //Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it + " and with forward checking in: " + fc.it +" and with fw heuristic: " + fch.it);
 
+            Console.ReadLine();
+
+            //  Console.WriteLine(i + ".\t" + cb.it + "\t" + cbh.it + "\t" + fc.it + "\t" + fch.it );
+            //Console.WriteLine("CB: " + cb.it + " and with heuristic in: " + cbh.it + " and with forward checking in: " + fc.it +" and with fw heuristic: " + fch.it);
         }
 
+        //For testing purposes and outputting times
         static public void runsudoku(SudokuSolver s)
         {
             double time = 0;
             long totalIterations = 0;
             string nameOfSolver = s.GetType().ToString().Split('.')[1];
-                for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 11; i++)
+            {
+                readBoardFromFile(i);
+                for (int k = 0; k < 1; k++)
                 {
-                    readBoardFromFile(i);
-                    for (int k = 0; k < 50; k++)
-                    {
-                        s.init(OriginalSudoku);
-                        s.it = 0;
-                        Stopwatch swatch = new Stopwatch();
-                        swatch.Start();
+                    s.init(OriginalSudoku);
+                    s.it = 0;
+                    Stopwatch swatch = new Stopwatch();
+                    swatch.Start();
 
-                        s.solve();
-                  
-                        totalIterations += s.it;
-                        swatch.Stop();
+                    s.solve();
 
-                        time += swatch.Elapsed.TotalMilliseconds;
-                    }
+                    totalIterations += s.it;
+                    swatch.Stop();
+
+                    Console.Write(s.it + " \t");
+                    //Console.Write(string.Format("{0:0.00}", swatch.Elapsed.TotalMilliseconds / 1.0) + "\t" );
+
+                    time += swatch.Elapsed.TotalMilliseconds;
                 }
-            Console.WriteLine( nameOfSolver + (new string(' ', 35- nameOfSolver.Length))  +  "\t" + string.Format("{0:0.00}", time/50) + "ms  \t" + totalIterations / 50.0 + " iterations");
+            }
+            Console.WriteLine(nameOfSolver + (new string(' ', 35 - nameOfSolver.Length)) + "\t" + totalIterations / 11);
+            //+ totalIterations / 1.0 + " iterations"
+            //string.Format("{0:0.00}", time/11.0) + "ms
         }
 
         //Function to read the board from a text file. Make sure there are spaces at the end

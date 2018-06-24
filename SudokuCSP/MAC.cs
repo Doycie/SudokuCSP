@@ -4,38 +4,70 @@ using System.Linq;
 
 namespace SudokuCSP
 {
-    internal class ForwardCheckingLookaheadHeuristic : ForwardCheckingLookahead
+    internal class MAC : ForwardChecking
     {
-        protected override bool solveRec(int startN)
+        public override void solve()
         {
-            if (startN == N * N)
+            domain = new int[N * N];
+
+            //Fill all domain values with numbers 1-9
+            for (int i = 0; i < N * N; i++)
+                domain[i] = 1022;
+
+            for (int i = 0; i < N * N; i++)
+            {
+                if (board[i] != 0)
+                {
+                    domain[i] = 0;
+                    RemoveAllFromDomains(i, board[i]);
+                }
+            }
+            if (makeConsistentb)
+                makeConsistent();
+
+            solveRec(0);
+        }
+
+        public bool makeConsistentb = false;
+
+        //Function to make the puzzel arc consistent from the start
+        protected virtual void makeConsistent()
+        {
+            bool foundChange = true;
+            while (foundChange)
+            {
+                foundChange = false;
+                for (int k = 0; k < N * N; k++)
+                {
+                    if (IsPowerOfTwo(domain[k]) && board[k] == 0)
+                    {
+                        foundChange = true;
+                        int i = 1;
+                        for (; i < N + 1; i++)
+                        {
+                            if (((domain[k] >> i) & 1) == 1)
+                                break;
+                        }
+                        board[k] = i;
+                        RemoveOneFromDomains(k, i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Recursive solve function same as the others
+        protected override bool solveRec(int start)
+        {
+            if (start == N * N)
             {
                 return true;
             }
 
-            int bestStart = 0;
-            int bestsoffar = 10;
-            for (int i = 0; i < domain.Length; i++)
-            {
-                if (board[i] == 0)
-                {
-                    int tot = 0;
-                    for (int k = 1; k < N + 1; k++)
-                    {
-                        tot += (domain[i] >> k) & 1;
-                    }
-                    if (tot < bestsoffar)
-                    {
-                        bestStart = i;
-                        bestsoffar = tot;
-                    }
-                }
-            }
-
-            int start = bestStart;
             if (board[start] == 0)
             {
                 it++;
+
                 for (int i = 1; i < N + 1; i++)
                 {
                     if (((domain[start] >> i) & 1) == 1)
@@ -47,7 +79,11 @@ namespace SudokuCSP
                         bool verandering = true;
                         bool gaatGoed = true;
                         int numberOfChanges = changes.Count;
+
                         int hoeveelToegevoegd = changes.Count;
+
+                        //Now if we fill in a new change we go over all the affected variables and make them consistent.
+                        //Then we keep going untill there are no more variables to make consinstent.
 
                         while (verandering && gaatGoed)
                         {
@@ -87,17 +123,18 @@ namespace SudokuCSP
                                 hoeveelToegevoegd = NewTempChanges.Count;
                                 changes.AddRange(NewTempChanges);
                             }
+
                             verandering = false;
                             if (changes.Count > numberOfChanges)
                             {
                                 verandering = true;
-                                numberOfChanges = changes.Count;
+                                numberOfChanges = changes.Count();
                             }
                         }
                         if (!gaatGoed)
                             continue;
 
-                        if (solveRec(startN + 1))
+                        if (solveRec(start + 1))
                             return true;
                         else
                         {
@@ -113,8 +150,9 @@ namespace SudokuCSP
             }
             else
             {
-                return solveRec(startN + 1);
+                return solveRec(start + 1);
             }
+
             return false;
         }
     }

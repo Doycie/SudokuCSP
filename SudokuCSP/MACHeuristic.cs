@@ -1,74 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SudokuCSP
 {
-    internal class ForwardCheckingLookahead : ForwardChecking
+    internal class MACHeuristic : MAC
     {
-        public override void solve()
+        //Same function as in MAC only this time we first do the position with the smallest domain
+        protected override bool solveRec(int startN)
         {
-            domain = new int[N * N];
-
-            //Fill all domain values with numbers 1-9
-            for (int i = 0; i < N * N; i++)
-                domain[i] = 1022;
-
-            for (int i = 0; i < N * N; i++)
-            {
-                if (board[i] != 0)
-                {
-                    domain[i] = 0;
-                    RemoveAllFromDomains(i, board[i]);
-                }
-            }
-           if(makeConsistentb)
-            makeConsistent();
-            
-
-            solveRec(0);
-        }
-
-       public bool makeConsistentb = false;
-
-        protected virtual void makeConsistent()
-        {
-
-            bool foundChange = true;
-            while (foundChange)
-            {
-                foundChange = false;
-                for (int k = 0; k < N * N; k++)
-                {
-                    if (IsPowerOfTwo(domain[k]) && board[k]  == 0)
-                    {
-                        foundChange = true;
-                        int i = 1;
-                        for (; i < N + 1; i++)
-                        {
-                            if (((domain[k] >> i) & 1) == 1)
-                                break;
-                        }
-                        board[k] = i;
-                        RemoveOneFromDomains(k,i);
-                        break;
-                    }
-                }
-            }
-        }
-
-
-        protected override bool solveRec(int start)
-        {
-            if (start == N * N)
+            if (startN == N * N)
             {
                 return true;
             }
 
+            int bestStart = 0;
+            int bestsoffar = 10;
+            for (int i = 0; i < domain.Length; i++)
+            {
+                if (board[i] == 0)
+                {
+                    int tot = 0;
+                    for (int k = 1; k < N + 1; k++)
+                    {
+                        tot += (domain[i] >> k) & 1;
+                    }
+                    if (tot < bestsoffar)
+                    {
+                        bestStart = i;
+                        bestsoffar = tot;
+                    }
+                }
+            }
+
+            int start = bestStart;
             if (board[start] == 0)
             {
                 it++;
-
                 for (int i = 1; i < N + 1; i++)
                 {
                     if (((domain[start] >> i) & 1) == 1)
@@ -80,7 +47,6 @@ namespace SudokuCSP
                         bool verandering = true;
                         bool gaatGoed = true;
                         int numberOfChanges = changes.Count;
-
                         int hoeveelToegevoegd = changes.Count;
 
                         while (verandering && gaatGoed)
@@ -121,18 +87,17 @@ namespace SudokuCSP
                                 hoeveelToegevoegd = NewTempChanges.Count;
                                 changes.AddRange(NewTempChanges);
                             }
-
                             verandering = false;
                             if (changes.Count > numberOfChanges)
                             {
                                 verandering = true;
-                                numberOfChanges = changes.Count();
+                                numberOfChanges = changes.Count;
                             }
                         }
                         if (!gaatGoed)
                             continue;
 
-                        if (solveRec(start + 1))
+                        if (solveRec(startN + 1))
                             return true;
                         else
                         {
@@ -148,9 +113,8 @@ namespace SudokuCSP
             }
             else
             {
-                return solveRec(start + 1);
+                return solveRec(startN + 1);
             }
-
             return false;
         }
     }
